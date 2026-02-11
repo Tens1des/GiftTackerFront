@@ -23,7 +23,7 @@ export function CreateWishlist() {
 
   useEffect(() => {
     getWishlistTemplates()
-      .then(setTemplates)
+      .then((t) => setTemplates(Array.isArray(t) ? t : []))
       .catch(() => setTemplates([]));
   }, []);
 
@@ -72,7 +72,7 @@ export function CreateWishlist() {
           <div className="card animate-in" style={{ padding: 20, marginBottom: 24 }}>
             <h3 style={{ fontSize: '0.95rem', marginBottom: 12, color: 'var(--text-muted)' }}>Выберите шаблон</h3>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
-              {templates.map((t) => (
+              {(templates ?? []).map((t) => (
                 <button
                   key={t.slug}
                   type="button"

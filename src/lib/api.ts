@@ -129,6 +129,7 @@ function mapItem(a: ApiWishlistItem): WishlistItem {
 }
 
 function mapWishlist(a: ApiWishlist): Wishlist {
+  const items = Array.isArray(a?.items) ? a.items : [];
   return {
     id: a.id,
     slug: a.slug,
@@ -139,7 +140,7 @@ function mapWishlist(a: ApiWishlist): Wishlist {
     created_at: '',
     owner_id: a.owner_id,
     deadline_at: a.deadline_at ?? null,
-    items: (a.items ?? []).map(mapItem),
+    items: items.map(mapItem),
   };
 }
 
@@ -194,7 +195,8 @@ export interface ApiWishlistShort {
 }
 
 export async function getMyWishlists(): Promise<Wishlist[]> {
-  const list = await api<ApiWishlistShort[]>('/api/wishlists');
+  const list = await api<ApiWishlistShort[] | null>('/api/wishlists');
+  if (!list || !Array.isArray(list)) return [];
   return list.map((w) => ({
     id: w.id,
     slug: w.slug,
@@ -209,7 +211,8 @@ export async function getMyWishlists(): Promise<Wishlist[]> {
 
 export async function getWishlistBySlug(slug: string): Promise<Wishlist | null> {
   try {
-    const data = await api<ApiWishlist>(`/api/wishlists/slug/${slug}`);
+    const data = await api<ApiWishlist | null>(`/api/wishlists/slug/${slug}`);
+    if (!data || typeof data !== 'object') return null;
     return mapWishlist(data);
   } catch {
     return null;
@@ -230,10 +233,11 @@ export async function createWishlist(params: {
   if (params.deadline_at != null && params.deadline_at !== '') {
     body.deadline_at = params.deadline_at;
   }
-  const data = await api<ApiWishlist>('/api/wishlists', {
+  const data = await api<ApiWishlist | null>('/api/wishlists', {
     method: 'POST',
     body,
   });
+  if (!data || typeof data !== 'object') throw new Error('Неверный ответ сервера');
   const wishlist = mapWishlist(data);
   return { wishlist, editToken: '' };
 }
@@ -385,5 +389,6 @@ export interface WishlistTemplate {
 }
 
 export async function getWishlistTemplates(): Promise<WishlistTemplate[]> {
-  return api<WishlistTemplate[]>('/api/wishlist-templates');
+  const data = await api<WishlistTemplate[] | null>('/api/wishlist-templates');
+  return Array.isArray(data) ? data : [];
 }

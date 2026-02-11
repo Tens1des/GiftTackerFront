@@ -39,7 +39,7 @@ export function ItemCard({
   const isGroupGift = item.target_amount != null && item.target_amount > 0;
   const progress = target && target > 0 ? Math.min(100, (totalContributed / target) * 100) : 0;
   const isFullyFunded = isGroupGift && target && totalContributed >= target;
-  const comments = item.comments ?? [];
+  const comments = Array.isArray(item.comments) ? item.comments : [];
   const [commentsOpen, setCommentsOpen] = useState(false);
 
   return (
@@ -161,7 +161,7 @@ export function ItemCard({
               </button>
               {commentsOpen && (
                 <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
-                  {comments.map((c) => (
+                  {(comments ?? []).map((c) => (
                     <li key={c.id} style={{ fontSize: '0.9rem', color: 'var(--text-muted)', marginBottom: 6 }}>
                       {c.body} — {formatCommentDate(c.created_at)}
                     </li>

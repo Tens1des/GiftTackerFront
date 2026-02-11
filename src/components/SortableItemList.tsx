@@ -55,6 +55,7 @@ function SortableRow({
 }
 
 export function SortableItemList({ items, isOwner, renderItem, onOrderChange }: SortableItemListProps) {
+  const safeItems = items ?? [];
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
@@ -63,21 +64,21 @@ export function SortableItemList({ items, isOwner, renderItem, onOrderChange }: 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
     if (!over || active.id === over.id) return;
-    const oldIndex = items.findIndex((i) => i.id === active.id);
-    const newIndex = items.findIndex((i) => i.id === over.id);
+    const oldIndex = safeItems.findIndex((i) => i.id === active.id);
+    const newIndex = safeItems.findIndex((i) => i.id === over.id);
     if (oldIndex === -1 || newIndex === -1) return;
-    const newOrder = arrayMove(items, oldIndex, newIndex);
+    const newOrder = arrayMove(safeItems, oldIndex, newIndex);
     onOrderChange(newOrder.map((i) => i.id));
   };
 
   if (!isOwner) {
-    return <>{items.map((item) => <div key={item.id}>{renderItem(item)}</div>)}</>;
+    return <>{safeItems.map((item) => <div key={item.id}>{renderItem(item)}</div>)}</>;
   }
 
   return (
     <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-      <SortableContext items={items.map((i) => i.id)} strategy={verticalListSortingStrategy}>
-        {items.map((item) => (
+      <SortableContext items={safeItems.map((i) => i.id)} strategy={verticalListSortingStrategy}>
+        {safeItems.map((item) => (
           <SortableRow key={item.id} id={item.id} disabled={false}>
             {renderItem(item)}
           </SortableRow>

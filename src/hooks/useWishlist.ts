@@ -52,7 +52,7 @@ export function useWishlist(slug: string | undefined) {
   }, [slug, wishlist?.id, fetchWishlist]);
 
   const isOwner = Boolean(user && wishlist && wishlist.owner_id && user.id === wishlist.owner_id);
-  const items: WishlistItem[] = wishlist?.items ?? [];
+  const items: WishlistItem[] = Array.isArray(wishlist?.items) ? wishlist.items : [];
 
   return {
     wishlist,

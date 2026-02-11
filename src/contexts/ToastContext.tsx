@@ -36,7 +36,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
     <ToastContext.Provider value={{ show, success, error }}>
       {children}
       <div className="toast-container" aria-live="polite">
-        {toasts.map((t) => (
+        {(toasts ?? []).map((t) => (
           <div key={t.id} className={`toast toast-${t.type}`}>
             {t.type === 'success' && <span className="toast-icon">✓</span>}
             {t.type === 'error' && <span className="toast-icon">!</span>}
