@@ -1,11 +1,32 @@
 /**
  * API клиент для бэкенда (Go), не Supabase.
  * Базовый URL задаётся в VITE_API_URL (например http://localhost:8081).
+ * JWT после логина/регистрации сохраняется и передаётся в заголовке (cross-origin надёжнее куки).
  */
 
 import type { Wishlist, WishlistItem } from '../types';
 
 const API_BASE = import.meta.env.VITE_API_URL ?? '';
+const AUTH_TOKEN_KEY = 'auth_token';
+
+function getStoredToken(): string | null {
+  if (typeof window === 'undefined') return null;
+  try {
+    return localStorage.getItem(AUTH_TOKEN_KEY);
+  } catch {
+    return null;
+  }
+}
+
+function setStoredToken(token: string | null): void {
+  if (typeof window === 'undefined') return;
+  try {
+    if (token) localStorage.setItem(AUTH_TOKEN_KEY, token);
+    else localStorage.removeItem(AUTH_TOKEN_KEY);
+  } catch {
+    // ignore
+  }
+}
 
 function getBase() {
   if (API_BASE) return API_BASE.replace(/\/$/, '');
@@ -19,11 +40,15 @@ async function api<T>(path: string, opts: ApiOptions = {}): Promise<T> {
   const { body, ...rest } = opts;
   const method = rest.method ?? 'GET';
   const url = getBase() + path;
-  const headers: HeadersInit = {
+  const headers: Record<string, string> = {
     ...(rest.headers as Record<string, string>),
   };
   if (body != null && method !== 'GET') {
-    (headers as Record<string, string>)['Content-Type'] = 'application/json';
+    headers['Content-Type'] = 'application/json';
+  }
+  const token = getStoredToken();
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
   }
   const res = await fetch(url, {
     ...rest,
@@ -127,11 +152,12 @@ export async function getMe(): Promise<ApiUser | null> {
 }
 
 export async function login(email: string, password: string): Promise<ApiUser> {
-  const res = await api<{ user: ApiUser }>('/api/auth/login', {
+  const res = await api<{ user: ApiUser; token?: string }>('/api/auth/login', {
     method: 'POST',
     body: { email, password },
   });
-  return (res as { user: ApiUser }).user;
+  if (res.token) setStoredToken(res.token);
+  return res.user;
 }
 
 export async function register(
@@ -139,15 +165,21 @@ export async function register(
   password: string,
   name?: string
 ): Promise<ApiUser> {
-  const res = await api<{ user: ApiUser }>('/api/auth/register', {
+  const res = await api<{ user: ApiUser; token?: string }>('/api/auth/register', {
     method: 'POST',
     body: { email, password, name: name || '' },
   });
-  return (res as { user: ApiUser }).user;
+  if (res.token) setStoredToken(res.token);
+  return res.user;
 }
 
 export async function logout(): Promise<void> {
-  await api('/api/auth/logout', { method: 'POST' });
+  setStoredToken(null);
+  try {
+    await api('/api/auth/logout', { method: 'POST' });
+  } catch {
+    // уже вышли или сеть — не мешаем сбросу на фронте
+  }
 }
 
 /** Список вишлистов пользователя (без items) */
