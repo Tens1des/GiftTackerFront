@@ -30,8 +30,8 @@ export function Login() {
   return (
     <Layout>
       <div className="container">
-        <h1 className="page-title">Вход</h1>
-        <form onSubmit={handleSubmit} className="card animate-in" style={{ padding: 28, maxWidth: 400 }}>
+        <h1 className="page-title animate-in">Вход</h1>
+        <form onSubmit={handleSubmit} className="card animate-in animate-in-delay-1" style={{ padding: 28, maxWidth: 400 }}>
           <div style={{ marginBottom: 18 }}>
             <label className="label">Email</label>
             <input

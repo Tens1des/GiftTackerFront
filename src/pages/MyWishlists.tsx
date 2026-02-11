@@ -67,8 +67,8 @@ export function MyWishlists() {
           </div>
         ) : (
           <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
-            {list.map((w) => (
-              <li key={w.id} className="animate-in" style={{ marginBottom: 14 }}>
+            {list.map((w, i) => (
+              <li key={w.id} className={`animate-in animate-in-delay-${Math.min(i + 1, 6)}`} style={{ marginBottom: 14 }}>
                 <div className="card card-hover" style={{ padding: '20px 24px' }}>
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: 16, justifyContent: 'space-between', alignItems: 'center' }}>
                     <div style={{ flex: 1, minWidth: 200 }}>

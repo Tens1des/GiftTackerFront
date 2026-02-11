@@ -25,16 +25,16 @@ export function Home() {
             Задайте <code>.env</code>: <code>VITE_API_URL=http://localhost:8081</code> (адрес бэкенда).
           </div>
         )}
-        <section className="hero card animate-in" style={{ padding: '48px 28px', textAlign: 'center', marginBottom: 48 }}>
-          <h1 style={{ fontFamily: 'var(--font-head)', fontSize: 'clamp(1.75rem, 4vw, 2.5rem)', marginBottom: 16, lineHeight: 1.2 }}>
+        <section className="hero card animate-in" style={{ padding: '56px 28px', textAlign: 'center', marginBottom: 48, background: 'linear-gradient(180deg, rgba(255,255,255,0.95) 0%, rgba(252,232,224,0.4) 100%)', border: '1px solid rgba(232,226,220,0.8)' }}>
+          <h1 style={{ fontFamily: 'var(--font-head)', fontSize: 'clamp(1.85rem, 4.5vw, 2.75rem)', marginBottom: 16, lineHeight: 1.2, letterSpacing: '-0.02em' }}>
             Списки желаний для друзей
           </h1>
-          <p style={{ color: 'var(--text-muted)', marginBottom: 32, maxWidth: 420, margin: '0 auto 32px', fontSize: '1.05rem' }}>
+          <p style={{ color: 'var(--text-muted)', marginBottom: 36, maxWidth: 420, margin: '0 auto 36px', fontSize: '1.08rem', lineHeight: 1.6 }}>
             Создайте вишлист к празднику, добавьте подарки и поделитесь ссылкой. Друзья смогут зарезервировать подарок
             или скинуться на крупный — без дублей и испорченных сюрпризов.
           </p>
           {!loading && (
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, justifyContent: 'center' }}>
+            <div className="hero-actions" style={{ display: 'flex', flexWrap: 'wrap', gap: 14, justifyContent: 'center' }}>
               {user ? (
                 <>
                   <Link to="/my" className="btn-secondary" style={{ padding: '14px 28px' }}>
@@ -74,8 +74,8 @@ export function Home() {
               { emoji: '🎯', title: 'Резерв и скиды', text: 'Один резервирует подарок, несколько могут скинуться на дорогой' },
               { emoji: '🎁', title: 'Сюрприз сохранён', text: 'Владелец не видит, кто что выбрал' },
             ].map((f, i) => (
-              <li key={i} className="card card-hover" style={{ padding: '20px 24px', display: 'flex', gap: 16, alignItems: 'flex-start' }}>
-                <span style={{ fontSize: '1.8rem', lineHeight: 1 }}>{f.emoji}</span>
+              <li key={i} className={`card card-hover animate-in animate-in-delay-${i + 1}`} style={{ padding: '22px 24px', display: 'flex', gap: 18, alignItems: 'flex-start' }}>
+                <span className="feature-emoji" style={{ fontSize: '1.9rem', lineHeight: 1 }}>{f.emoji}</span>
                 <div>
                   <strong style={{ display: 'block', marginBottom: 4 }}>{f.title}</strong>
                   <span style={{ fontSize: '0.95rem', color: 'var(--text-muted)' }}>{f.text}</span>

@@ -1,10 +1,18 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 
 export function Layout({ children }: { children: React.ReactNode }) {
   const { user, logout } = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 12);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
 
   const navLinks = (
     <>
@@ -38,7 +46,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="layout">
-      <header className="header">
+      <header className={`header ${scrolled ? 'scrolled' : ''}`}>
         <div className="container">
           <Link to="/" className="logo" onClick={() => setMobileOpen(false)}>
             <span className="logo-icon">🎁</span>
@@ -51,9 +59,10 @@ export function Layout({ children }: { children: React.ReactNode }) {
             type="button"
             className="btn-icon nav-mobile-trigger"
             aria-label="Меню"
-            onClick={() => setMobileOpen(true)}
+            onClick={() => setMobileOpen(!mobileOpen)}
+            aria-expanded={mobileOpen}
           >
-            {mobileOpen ? '✕' : '☰'}
+            <span className="nav-mobile-icon" aria-hidden>{mobileOpen ? '✕' : '☰'}</span>
           </button>
         </div>
       </header>
