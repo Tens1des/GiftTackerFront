@@ -152,7 +152,7 @@ async function sbLogin(email: string, password: string): Promise<ApiUser> {
   const { error } = await supabase.auth.signInWithPassword({ email, password });
   if (error) {
     const msg = error.message === 'Invalid login credentials'
-      ? 'Неверный email или пароль. Если только регистрировались — проверьте почту и перейдите по ссылке подтверждения (или отключите «Confirm email» в Supabase для разработки).'
+      ? 'Неверный email или пароль'
       : error.message;
     throw new Error(msg);
   }
