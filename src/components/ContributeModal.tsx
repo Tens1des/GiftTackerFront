@@ -19,16 +19,16 @@ export function ContributeModal({ item, currentTotal, onConfirm, onClose }: Cont
   const target = item.target_amount ?? 0;
   const remaining = Math.max(0, target - currentTotal);
 
-  const [error, setError] = useState<string | null>(null);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError(null);
+    setSubmitError(null);
     const a = parseFloat(amount.replace(',', '.').replace(/\s/g, ''));
     const n = nickname.trim();
     if (!n || !Number.isFinite(a) || a <= 0) return;
     if (remaining > 0 && a > remaining) {
-      setError(`Сумма не должна превышать оставшуюся сумму (${formatPrice(remaining)})`);
+      setSubmitError(`Сумма не должна превышать оставшуюся сумму (${formatPrice(remaining)})`);
       return;
     }
     setLoading(true);
@@ -36,7 +36,7 @@ export function ContributeModal({ item, currentTotal, onConfirm, onClose }: Cont
       await Promise.resolve(onConfirm(a, n));
       onClose();
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Ошибка');
+      setSubmitError(e instanceof Error ? e.message : 'Ошибка');
     } finally {
       setLoading(false);
     }
@@ -52,6 +52,9 @@ export function ContributeModal({ item, currentTotal, onConfirm, onClose }: Cont
         <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', marginBottom: '16px' }}>
           Владелец списка не увидит, кто сколько внёс — только общую сумму.
         </p>
+        {submitError && (
+          <p style={{ color: '#9a3b3b', fontSize: '0.9rem', marginBottom: 12 }}>{submitError}</p>
+        )}
         <form onSubmit={handleSubmit}>
           <div style={{ marginBottom: '12px' }}>
             <label style={{ display: 'block', marginBottom: '4px', fontSize: '0.9rem', color: 'var(--text-muted)' }}>

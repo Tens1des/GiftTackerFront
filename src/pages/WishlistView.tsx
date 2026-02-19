@@ -288,7 +288,7 @@ export function WishlistView() {
                 await refetch();
                 toast.success('Вклад добавлен');
               } catch (e) {
-                const msg = e?.message ?? '';
+                const msg = e instanceof Error ? e.message : String(e ?? '');
                 const isExceed = msg.includes('exceed') || msg.includes('превышать') || msg.includes('оставшуюся');
                 toast.error(isExceed ? 'Сумма не должна превышать оставшуюся сумму сбора' : msg);
               }
