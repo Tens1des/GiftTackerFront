@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState, useCallback } from 'react';
 import { getMe, login as apiLogin, register as apiRegister, logout as apiLogout, type ApiUser } from '../lib/api';
+import { supabase, isSupabaseConfigured } from '../lib/supabase';
 
 interface AuthContextValue {
   user: ApiUser | null;
@@ -22,6 +23,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   useEffect(() => {
+    if (isSupabaseConfigured() && supabase) {
+      getMe().then(setUser).finally(() => setLoading(false));
+      const { data: { subscription } } = supabase.auth.onAuthStateChange(() => {
+        getMe().then(setUser);
+      });
+      return () => subscription.unsubscribe();
+    }
     getMe()
       .then(setUser)
       .finally(() => setLoading(false));

@@ -226,10 +226,9 @@ export function WishlistView() {
                 onReserve={!isOwner && !isPastDeadline ? (i) => setReserveModalItem(i) : undefined}
                 onContribute={!isOwner && !isPastDeadline ? (i) => setContributeModalItem(i) : undefined}
                 onUnreserve={
-                  !isOwner
+                  !isOwner && item.reserved_by_me
                     ? (i) => {
-                        const name = reservationByItem.get(i.id);
-                        if (name) unreserveItem(i.id, name).then(() => { refetch(); toast.success('Резерв снят'); }).catch((e) => toast.error(e?.message || 'Ошибка'));
+                        unreserveItem(i.id).then(() => { refetch(); toast.success('Резерв снят'); }).catch((e) => toast.error(e?.message || 'Ошибка'));
                       }
                     : undefined
                 }
@@ -237,8 +236,20 @@ export function WishlistView() {
                 onRemove={
                   isOwner
                     ? (i) => {
-                        if (window.confirm('Удалить этот подарок из списка?'))
-                          deleteWishlistItem(i.id).then(() => { refetch(); toast.success('Удалено'); }).catch((e) => toast.error(e?.message || 'Ошибка'));
+                        if ((i.total_contributed_cents ?? 0) > 0) {
+                          toast.error('Нельзя удалить подарок, на который уже скидывались');
+                          return;
+                        }
+                        if (window.confirm('Удалить этот подарок из списка?')) {
+                          deleteWishlistItem(i.id)
+                            .then(() => { refetch(); toast.success('Удалено'); })
+                            .catch((e) => {
+                              const msg = (e?.message || '').includes('contributions') || (e?.message || '').includes('cannot delete') || (e?.message || '').includes('скидывались')
+                                ? 'Нельзя удалить подарок, на который уже скидывались'
+                                : (e?.message || 'Ошибка');
+                              toast.error(msg);
+                            });
+                        }
                       }
                     : undefined
                 }
@@ -271,10 +282,16 @@ export function WishlistView() {
             item={contributeModalItem}
             currentTotal={totalByItem[contributeModalItem.id] ?? 0}
             onConfirm={async (amount, nickname) => {
-              await addContribution(contributeModalItem.id, amount, nickname);
-              setContributeModalItem(null);
-              await refetch();
-              toast.success('Вклад добавлен');
+              try {
+                await addContribution(contributeModalItem.id, amount, nickname);
+                setContributeModalItem(null);
+                await refetch();
+                toast.success('Вклад добавлен');
+              } catch (e) {
+                const msg = e?.message ?? '';
+                const isExceed = msg.includes('exceed') || msg.includes('превышать') || msg.includes('оставшуюся');
+                toast.error(isExceed ? 'Сумма не должна превышать оставшуюся сумму сбора' : msg);
+              }
             }}
             onClose={() => setContributeModalItem(null)}
           />

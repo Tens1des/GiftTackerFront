@@ -89,8 +89,9 @@ export function CreateWishlist() {
 
         <form onSubmit={handleSubmit} className="card animate-in" style={{ padding: 28, maxWidth: 480 }}>
           <div style={{ marginBottom: 18 }}>
-            <label className="label">Название списка *</label>
+            <label htmlFor="create-title" className="label">Название списка *</label>
             <input
+              id="create-title"
               type="text"
               className="input"
               value={title}
@@ -100,8 +101,9 @@ export function CreateWishlist() {
             />
           </div>
           <div style={{ marginBottom: 18 }}>
-            <label className="label">Повод (необязательно)</label>
+            <label htmlFor="create-occasion" className="label">Повод (необязательно)</label>
             <input
+              id="create-occasion"
               type="text"
               className="input"
               value={occasion}
@@ -110,8 +112,9 @@ export function CreateWishlist() {
             />
           </div>
           <div style={{ marginBottom: 18 }}>
-            <label className="label">Активен до (дата)</label>
+            <label htmlFor="create-deadline" className="label">Активен до (дата)</label>
             <input
+              id="create-deadline"
               type="date"
               className="input"
               value={deadlineAt}
@@ -122,8 +125,9 @@ export function CreateWishlist() {
             </p>
           </div>
           <div style={{ marginBottom: 22 }}>
-            <label className="label">Ваше имя (увидят друзья)</label>
+            <label htmlFor="create-owner-name" className="label">Ваше имя (увидят друзья)</label>
             <input
+              id="create-owner-name"
               type="text"
               className="input"
               value={ownerName}

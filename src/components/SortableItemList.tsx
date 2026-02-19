@@ -49,7 +49,7 @@ function SortableRow({
           ⋮⋮
         </button>
       )}
-      <div style={{ flex: 1, minWidth: 0 }}>{children}</div>
+      <div className="sortable-row-content">{children}</div>
     </div>
   );
 }
@@ -84,22 +84,6 @@ export function SortableItemList({ items, isOwner, renderItem, onOrderChange }: 
           </SortableRow>
         ))}
       </SortableContext>
-      <style>{`
-        .sortable-row {
-          display: flex;
-          align-items: flex-start;
-          gap: 8px;
-          margin-bottom: 16px;
-        }
-        .sortable-grip {
-          cursor: grab;
-          color: var(--text-muted);
-          flex-shrink: 0;
-        }
-        .sortable-grip:active {
-          cursor: grabbing;
-        }
-      `}</style>
     </DndContext>
   );
 }

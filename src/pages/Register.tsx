@@ -36,8 +36,9 @@ export function Register() {
           style={{ padding: 28, maxWidth: 400 }}
         >
           <div style={{ marginBottom: 18 }}>
-            <label className="label">Имя (необязательно)</label>
+            <label htmlFor="register-name" className="label">Имя (необязательно)</label>
             <input
+              id="register-name"
               type="text"
               className="input"
               value={name}
@@ -46,8 +47,9 @@ export function Register() {
             />
           </div>
           <div style={{ marginBottom: 18 }}>
-            <label className="label">Email *</label>
+            <label htmlFor="register-email" className="label">Email *</label>
             <input
+              id="register-email"
               type="email"
               className="input"
               value={email}
@@ -57,8 +59,9 @@ export function Register() {
             />
           </div>
           <div style={{ marginBottom: 22 }}>
-            <label className="label">Пароль (минимум 6 символов) *</label>
+            <label htmlFor="register-password" className="label">Пароль (минимум 6 символов) *</label>
             <input
+              id="register-password"
               type="password"
               className="input"
               value={password}

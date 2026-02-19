@@ -19,15 +19,24 @@ export function ContributeModal({ item, currentTotal, onConfirm, onClose }: Cont
   const target = item.target_amount ?? 0;
   const remaining = Math.max(0, target - currentTotal);
 
+  const [error, setError] = useState<string | null>(null);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const a = parseFloat(amount.replace(',', '.'));
+    setError(null);
+    const a = parseFloat(amount.replace(',', '.').replace(/\s/g, ''));
     const n = nickname.trim();
     if (!n || !Number.isFinite(a) || a <= 0) return;
+    if (remaining > 0 && a > remaining) {
+      setError(`Сумма не должна превышать оставшуюся сумму (${formatPrice(remaining)})`);
+      return;
+    }
     setLoading(true);
     try {
       await Promise.resolve(onConfirm(a, n));
       onClose();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Ошибка');
     } finally {
       setLoading(false);
     }
@@ -80,8 +89,11 @@ export function ContributeModal({ item, currentTotal, onConfirm, onClose }: Cont
                 loading ||
                 !nickname.trim() ||
                 !amount.trim() ||
-                !Number.isFinite(parseFloat(amount.replace(',', '.'))) ||
-                parseFloat(amount.replace(',', '.')) <= 0
+                remaining <= 0 ||
+                (() => {
+                  const a = parseFloat(amount.replace(',', '.').replace(/\s/g, ''));
+                  return !Number.isFinite(a) || a <= 0 || a > remaining;
+                })()
               }
             >
               Внести вклад

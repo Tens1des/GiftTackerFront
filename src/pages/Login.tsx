@@ -33,8 +33,9 @@ export function Login() {
         <h1 className="page-title animate-in">Вход</h1>
         <form onSubmit={handleSubmit} className="card animate-in animate-in-delay-1" style={{ padding: 28, maxWidth: 400 }}>
           <div style={{ marginBottom: 18 }}>
-            <label className="label">Email</label>
+            <label htmlFor="login-email" className="label">Email</label>
             <input
+              id="login-email"
               type="email"
               className="input"
               value={email}
@@ -44,8 +45,9 @@ export function Login() {
             />
           </div>
           <div style={{ marginBottom: 22 }}>
-            <label className="label">Пароль</label>
+            <label htmlFor="login-password" className="label">Пароль</label>
             <input
+              id="login-password"
               type="password"
               className="input"
               value={password}

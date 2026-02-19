@@ -31,6 +31,7 @@ export interface WishlistItem {
   created_at: string;
   reserved?: boolean;
   reserved_by?: string;
+  reserved_by_me?: boolean;
   total_contributed_cents?: number;
   target_cents?: number;
   comments?: ItemComment[];
